@@ -1,5 +1,7 @@
 #lang pl
 ;==========Function:getMax==========
+;this question take me 3 houres because I had to understand the syntax of racket
+;And to enter the different thinking of language ,and recursive thinking
 (: getMax : (Listof Number) -> Number );#name: getMax | #input: List | #output:max number of list
 (define (getMax list)
      (if (null? list)0 ;if the list is empty
@@ -42,11 +44,75 @@
 (test (min&max -1 -2 -4 -7 -100) => '(-100 -1))
 (test (min&max -1 2 -4 -7 0) => '(-7 2))
 
+
+;~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+;~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+;~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 ;~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 ;~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 ;~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
+
+;==========Type:KeyStack==========
+;this question take me 2 houres I quickly realized the thinking of cutting trees
+;The first setting took time, but the functions were fast
+
+;its like cutting trees: KeyStack -> Push Symbol String and again KeyStack for cyclicality,
+;and for the empty group or end truncated EmptyKS
+(define-type KeyStack
+  [Push Symbol String KeyStack]
+  [EmptyKS]
+  )
+;==========Test:EmptyKS + Push==========
+(test (EmptyKS) => (EmptyKS))
+(test (KeyStack? (Push 'b "B" (Push 'a "A" (EmptyKS)))) => #t)
+(test (Push 'b "B" (Push 'a "A" (EmptyKS))) => (Push 'b "B" (Push 'a "A" (EmptyKS))))
+
+;==========Function:pop-stacks==========
+;its like cutting trees: if its empty group return false if its of type push you need to return c,
+;because c is my internal stack
+(: pop-stack : KeyStack -> (U KeyStack #f)) 
+(define (pop-stack stack)
+  ( cases stack
+     [( EmptyKS ) #f ]
+     [(Push a b c) c])
+  )
+;==========Test:pop-stack==========
+(test (pop-stack (Push 'a "AAA" (Push 'b "B" (Push 'a "A"(EmptyKS))))) => (Push 'b "B" (Push 'a "A" (EmptyKS))))
+(test (pop-stack (EmptyKS)) => #f)
+
+;==========Function:search-stack==========
+;The function extracts String using Symbol
+;in case that the stack is empty return false,
+;in case that we do Push -> check if the symbol equals if its true return the value,
+;else go to the next iteration
+(: search-stack : Symbol KeyStack -> (U String #f)) 
+(define (search-stack x stack)
+  ( cases stack
+     [( EmptyKS ) #f]
+     [(Push a b c)
+      (cond
+      [(eq? a x) b]
+      (else (search-stack x c)))
+      ])
+  )
+ ;==========Test:search-stack==========
+(test (search-stack 'a (EmptyKS)) => #f)
+(test (search-stack 'a (Push 'a "AAA" (Push 'b "B" (Push 'a "A" (EmptyKS))))) => "AAA")
+(test (search-stack 'c (Push 'a "AAA" (Push 'b "B" (Push 'a "A" (EmptyKS))))) => #f)
+
+
+;~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+;~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+;~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+;~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+;~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+;~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
 ;==========Function:sublist-numbers==========
+;this question take me 5 houres because I had to understand the tail recursive thinking
+;And disassemble the functions
 (: sublist-numbers : (Listof Any) -> (Listof Number));#name: sublist-numbers | #input: List of any types | #output:List of number
 (define (sublist-numbers list)
   (sublist-numbers-ans list '());return function that give us the answer => list with only numbers
@@ -97,41 +163,16 @@
 (test (min&max-lists '()) => null)
 (test (min&max-lists '((-4 5 1 5 L) (4 5 105 7 3 2 1) ())) => '((-4 5) (1 105) ()))
 
-;~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-;~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-;~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-;==========Type:KeyStack==========
-(define-type KeyStack
-  [Push Symbol String KeyStack]
-  [EmptyKS]
-  )
-
-(: pop-stack : KeyStack -> (U KeyStack #f)) 
-(define (pop-stack stack)
-  ( cases stack
-     [( EmptyKS ) #f ]
-     [(Push a b c) c])
-  )
-
-  
-;==========Test:EmptyKS + Push==========
-(test (EmptyKS) => (EmptyKS))
-(test (KeyStack? (Push 'b "B" (Push 'a "A" (EmptyKS)))) => #t)
-(test (Push 'b "B" (Push 'a "A" (EmptyKS))) =>
-      (Push 'b "B" (Push 'a "A" (EmptyKS))))
-
-;(test (search-stack 'a (EmptyKS)) => #f)
-;(test (search-stack 'a (Push 'a "AAA" (Push 'b "B" (Push 'a "A" (EmptyKS))))) => "AAA")
-;(test (search-stack 'c (Push 'a "AAA" (Push 'b "B" (Push 'a "A" (EmptyKS))))) => #f)
-(test (pop-stack (Push 'a "AAA" (Push 'b "B" (Push 'a "A"
-(EmptyKS))))) => (Push 'b "B" (Push 'a "A" (EmptyKS))))
-(test (pop-stack (EmptyKS)) => #f)
 
 ;~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 ;~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 ;~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+;~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+;~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+;~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
+
+;;this question take me 1.5 ~ 2.0 houres, I understood the solution quickly, but the wording note took time
 ;==========Function:is-odd?==========
 (: is-odd? : Natural -> Boolean);#name: is-odd? | #input: Natural number | #output: boolean (#t or #f)
 (define (is-odd? x)
